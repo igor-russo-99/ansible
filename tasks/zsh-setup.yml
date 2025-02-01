@@ -1,0 +1,27 @@
+- name: Install zsh
+  package:
+    name: zsh
+    state: present
+  tags: ['install', 'zsh']
+
+- name: Change shell to zsh
+  shell: chsh -s $(which zsh)
+  tags: ['install', 'zsh']
+
+- name: Change default shell to zsh for the user
+  user:
+    name: igorsr 
+    shell: /bin/zsh
+  tags: ['install', 'zsh']
+
+- name: Check that the somefile.conf exists
+  stat:
+    path: /home/igorsr/.oh-my-zsh
+  register: oh_my_stats
+  tags: ['install', 'zsh']
+
+- name: Oh-My-Zsh
+  shell: curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh > ~/.oh-my-installer && chmod +x ~/.oh-my-installer && ~/.oh-my-installer
+  tags: ['install', 'zsh']
+  when: oh_my_stats.stat.exists == False
+  become_user: igorsr
